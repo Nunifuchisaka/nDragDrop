@@ -1,0 +1,33 @@
+#ndd {
+  &_clones {
+    position: absolute;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  &_selectable_helper {
+    position: absolute;
+    z-index: 100;
+    border: 1px dotted black;
+    pointer-events: none;
+    & > div {
+      
+    }
+  }
+}
+
+
+.ndd {
+  &_drag {
+    user-select: none;
+    user-drag: none;
+  }
+  &_drop {
+    user-select: none;
+  }
+  &_drop_active {
+    background-color: #eebbcb;
+  }
+  &_selected {
+    background-color: red !important;
+  }
+}

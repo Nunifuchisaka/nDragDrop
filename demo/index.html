@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<title>nDragDrop</title>
+
+<style>
+/*
+body {
+  position: relative;
+}
+*/
+ul, ol, li {
+  list-style: none;
+}
+</style>
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" /> -->
+<link rel="stylesheet" href="../dst/jquery.nDragDrop.css" />
+<style>
+.div_1 {
+  
+}
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled {
+  opacity: 1;
+}
+
+.list_1 {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.list_1__items {
+  overflow: hidden;
+  position: relative;
+  padding: 100px;
+  margin: 0 20px;
+  border: solid 1px #ccc;
+}
+.list_1__item:not(:first-of-type) {
+  margin-top: 20px;
+}
+.list_1__item {
+  position: relative;
+/*   position: absolute; */
+  padding: 1em;
+  color: #fff;
+  background: #333;
+  cursor: move;
+}
+/*
+.list_1__item.ndd_selected {
+  background-color: red;
+}
+*/
+/*
+.ui-draggable-container .list_1__item {
+  position: absolute !important;
+}
+*/
+</style>
+
+</head>
+<body>
+
+<h1>nDragDrop</h1>
+
+
+<div id="wrapper" class="list_1">
+  <ul id="list1" class="list_1__items">
+    <li class="list_1__item ndd_selected" draggable="true">a1</li>
+    <li class="list_1__item" draggable="true">a2</li>
+    <li class="list_1__item ndd_selected" draggable="true">a3</li>
+    <li class="list_1__item ndd_selected" draggable="true">a4</li>
+    <li class="list_1__item" draggable="true">a5</li>
+    <li class="list_1__item" draggable="true">a6</li>
+    <li class="list_1__item" draggable="true">a7</li>
+  </ul>
+  <ul id="list2" class="list_1__items">
+    <li class="list_1__item ndd_selected" draggable="true">b1</li>
+    <li class="list_1__item" draggable="true">b2</li>
+    <li class="list_1__item" draggable="true">b3</li>
+    <li class="list_1__item" draggable="true">b4</li>
+    <li class="list_1__item" draggable="true">b5</li>
+    <li class="list_1__item" draggable="true">b6</li>
+    <li class="list_1__item" draggable="true">b7</li>
+  </ul>
+</div><!-- /.list_1 -->
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
+<script src="../dst/jquery.nDragDrop.js"></script>
+<script>
+$(function(){
+  
+  const $document = $(document);
+  
+  new nSelectable({
+    //el: ".list_1__item"
+    el: ".list_1__items",
+    excluse: ".list_1__item"
+  });
+  
+  //$("#list1").selectable();
+  //$("#list2").selectable();
+  
+  new nDragDrop.draggable({
+    //el: ".list_1__item"
+    el: ".ndd_selected"
+  });
+  
+  new nDragDrop.droppable({
+    el: ".list_1__items"
+  });
+  
+  /*
+  $(".list_1__item").nDraggable({
+    hoge: "hage"
+  });
+  
+  $(".list_1__items").nDroppable({
+    fuga: "fage"
+  });
+  */
+  
+  /*
+  $document.on("dragstart", ".list_1__item", function(e){
+    const $me = $(this);
+    $me.addClass("ndd_selected");
+    e.originalEvent.dataTransfer.setData("text", $me.text());
+  });
+  
+  $document.on("dragend", ".list_1__item", function(e){
+    $(this).removeClass("ndd_selected");
+  });
+  
+  
+  $(".list_1__items").on({
+    dragover: function(e){
+      e.preventDefault();
+    },
+    drop: function(e){
+      console.log( e );
+      const text = e.originalEvent.dataTransfer.getData("text");
+      console.log("text", text);
+    }
+  });
+  */
+  
+});
+</script>
+</body>
+</html>
