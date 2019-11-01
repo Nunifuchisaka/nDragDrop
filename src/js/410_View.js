@@ -1,34 +1,8 @@
 /*
-$.fn.nDragDrop.draggable = function( opts ){
-  var self = this;
-  return this.each(function( i, el ){
-    var _opts = $.extend({
-      i: i,
-      el: el
-    }, opts);
-    new nDragDrop.draggable(_opts);
-  });
-}
-
-
-$.fn.nDroppable = function( opts ){
-  var self = this;
-  return this.each(function( i, el ){
-    var _opts = $.extend({
-      i: i,
-      el: el
-    }, opts);
-    new nDroppable(_opts);
-  });
-}
-*/
-
-
-
-/*
 ## functions
 */
 
+//要素が被さっているか否かを取得
 function getOverlap($a, $b){
   var a_rect = $a.get(0).getBoundingClientRect(),
       b_rect = $b.get(0).getBoundingClientRect();
@@ -41,7 +15,7 @@ function getOverlap($a, $b){
 
 
 /*
-## 
+## 共通で使う変数とか
 */
 
 var ndd = {
@@ -112,14 +86,28 @@ nDragDrop.draggable.prototype.mousedown = function(event){
   ndd.$current.drag = $(event.currentTarget).parent().find(this.opts.el);
   //console.log("ndd.$current.drag", ndd.$current.drag);
   var elOffset = ndd.$current.drag.offset();
-  //console.log("elOffset", elOffset);
+  console.log("elOffset", elOffset);
   ndd.$clones
     .show()
     .css({
       top: elOffset.top,
       left: elOffset.left
-    })
-    .append( ndd.$current.drag.clone() );
+    });
+    //.append( ndd.$current.drag.clone() );
+  
+  console.group("set position");
+  //var _drag = ndd.$current.drag.clone();
+  ndd.$current.drag.each(function(i,el){
+    var $el = $(el),
+        offset = $el.offset();
+    var _$el =  $el.clone().css({
+      top: offset.top - elOffset.top,
+      left: offset.left - elOffset.left
+    });
+    ndd.$clones.append(_$el);
+  });
+  console.groupEnd();
+  
   ndd.$current.drag.css("visibility", "hidden");
   
   //掴んだ位置の差分
@@ -286,7 +274,7 @@ nSelectable.prototype.mousedown = function(event){
 
 nSelectable.prototype.mousemove = function(event){
   if( null == ndd.$current.select ) return;
-  console.count("selectable mousemove");
+  //console.count("selectable mousemove");
   var self = this;
   //ここ丸コピ
   var tmp,

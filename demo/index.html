@@ -27,39 +27,37 @@ ul, ol, li {
   opacity: 1;
 }
 
-.list_1 {
+.container_1 {
   display: flex;
-  justify-content: center;
   position: relative;
 }
-.list_1__items {
+
+.list_1 {
   overflow: hidden;
   position: relative;
-  padding: 100px;
+  width: 412px;
   margin: 0 20px;
-  border: solid 1px #ccc;
 }
-.list_1__item:not(:first-of-type) {
-  margin-top: 20px;
-}
-.list_1__item {
+
+.list_1__items {
+  display: flex;
+  flex-wrap: wrap;
   position: relative;
-/*   position: absolute; */
-  padding: 1em;
+  padding: 100px;
+  border: solid 1px #ccc;
+  box-sizing: border-box;
+}
+
+.list_1__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  margin: 10px;
   color: #fff;
   background: #333;
-  cursor: move;
 }
-/*
-.list_1__item.ndd_selected {
-  background-color: red;
-}
-*/
-/*
-.ui-draggable-container .list_1__item {
-  position: absolute !important;
-}
-*/
 </style>
 
 </head>
@@ -67,27 +65,32 @@ ul, ol, li {
 
 <h1>nDragDrop</h1>
 
-
-<div id="wrapper" class="list_1">
-  <ul id="list1" class="list_1__items">
-    <li class="list_1__item ndd_selected" draggable="true">a1</li>
-    <li class="list_1__item" draggable="true">a2</li>
-    <li class="list_1__item ndd_selected" draggable="true">a3</li>
-    <li class="list_1__item ndd_selected" draggable="true">a4</li>
-    <li class="list_1__item" draggable="true">a5</li>
-    <li class="list_1__item" draggable="true">a6</li>
-    <li class="list_1__item" draggable="true">a7</li>
-  </ul>
-  <ul id="list2" class="list_1__items">
-    <li class="list_1__item ndd_selected" draggable="true">b1</li>
-    <li class="list_1__item" draggable="true">b2</li>
-    <li class="list_1__item" draggable="true">b3</li>
-    <li class="list_1__item" draggable="true">b4</li>
-    <li class="list_1__item" draggable="true">b5</li>
-    <li class="list_1__item" draggable="true">b6</li>
-    <li class="list_1__item" draggable="true">b7</li>
-  </ul>
-</div><!-- /.list_1 -->
+<div id="wrapper" class="container_1">
+  <div class="list_1">
+    <ul id="list1" class="list_1__items">
+      <li class="list_1__item ndd_selected">a1</li>
+      <li class="list_1__item">a2</li>
+      <li class="list_1__item ndd_selected">a3</li>
+      <li class="list_1__item ndd_selected">a4</li>
+      <li class="list_1__item">a5</li>
+      <li class="list_1__item">a6</li>
+      <li class="list_1__item">a7</li>
+      <li class="list_1__item">a8</li>
+    </ul>
+  </div><!-- /.list_1 -->
+  <div class="list_1">
+    <ul id="list2" class="list_1__items">
+      <li class="list_1__item ndd_selected">b1</li>
+      <li class="list_1__item">b2</li>
+      <li class="list_1__item">b3</li>
+      <li class="list_1__item">b4</li>
+      <li class="list_1__item">b5</li>
+      <li class="list_1__item">b6</li>
+      <li class="list_1__item">b7</li>
+      <li class="list_1__item">b7</li>
+    </ul>
+  </div><!-- /.list_1 -->
+</div><!-- /#wrapper.container_1 -->
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
@@ -100,56 +103,17 @@ $(function(){
   const $document = $(document);
   
   new nSelectable({
-    //el: ".list_1__item"
     el: ".list_1__items",
     excluse: ".list_1__item"
   });
   
-  //$("#list1").selectable();
-  //$("#list2").selectable();
-  
   new nDragDrop.draggable({
-    //el: ".list_1__item"
     el: ".ndd_selected"
   });
   
   new nDragDrop.droppable({
     el: ".list_1__items"
   });
-  
-  /*
-  $(".list_1__item").nDraggable({
-    hoge: "hage"
-  });
-  
-  $(".list_1__items").nDroppable({
-    fuga: "fage"
-  });
-  */
-  
-  /*
-  $document.on("dragstart", ".list_1__item", function(e){
-    const $me = $(this);
-    $me.addClass("ndd_selected");
-    e.originalEvent.dataTransfer.setData("text", $me.text());
-  });
-  
-  $document.on("dragend", ".list_1__item", function(e){
-    $(this).removeClass("ndd_selected");
-  });
-  
-  
-  $(".list_1__items").on({
-    dragover: function(e){
-      e.preventDefault();
-    },
-    drop: function(e){
-      console.log( e );
-      const text = e.originalEvent.dataTransfer.getData("text");
-      console.log("text", text);
-    }
-  });
-  */
   
 });
 </script>
