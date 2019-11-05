@@ -27,6 +27,7 @@ var ndd = {
 
 var Common = function(){
   console.count("Common");
+  ndd.$window = $(window);
   ndd.$body = $("body");
   //ndd.$clones = $('#nDragDrop_clones');
   ndd.$clones = $('<div id="ndd_clones"></div>');
@@ -213,7 +214,7 @@ nDragDrop.droppable.prototype.mouseup = function(event){
 */
 
 window.nSelectable = function(opts){
-  _.bindAll(this, "init", "mousedown", "mousemove", "mouseup");
+  _.bindAll(this, "init", "click", "mousedown", "mousemove", "mouseup", "keydown");
   this.init(opts);
 }
 
@@ -233,7 +234,7 @@ nSelectable.prototype.init = function(opts){
   };
   
   this.$selectee;
-  this.$selected;
+  this.$selected;//(this.opts.selectee).filter(".ndd_selected")
   this.$el = $(this.opts.el);
   ndd.$current.select = null;
   
@@ -243,9 +244,30 @@ nSelectable.prototype.init = function(opts){
   ndd.$body.on("mousemove.ndd_selectable", this.mousemove);
   ndd.$body.on("mouseup.ndd_selectable", this.mouseup);
   
+  ndd.$body.on("click.ndd_selectable", this.opts.el + " " + this.opts.selectee, this.click);
+  
   if( this.opts.excluse ){
     ndd.$body.on("mousedown", this.opts.excluse, this.excluse);
   }
+  
+  //ndd.$window.on("keydown", this.keydown);
+  //ndd.$body.on("keydown", this.opts.selectee, this.keydown);
+  
+  console.groupEnd();
+}
+
+nSelectable.prototype.click = function(event){
+  console.group("click");
+  var $me = $(event.currentTarget);
+  console.log("currentTarget", event.currentTarget);
+  var $select = $me.parents(this.opts.el);
+  
+  if( !(event.ctrlKey || event.metaKey) ){
+    console.log("ctrl or cmd.");
+    $select.find(".ndd_selected").removeClass("ndd_selected");
+  }
+  
+  $me.addClass("ndd_selected");
   console.groupEnd();
 }
 
@@ -307,4 +329,8 @@ nSelectable.prototype.mouseup = function(event){
   ndd.$current.select = null;
   this.$helper.remove();
   console.log("this.$helper", this.$helper);
+}
+
+nSelectable.prototype.keydown = function(event){
+  return false;
 }
