@@ -12,6 +12,11 @@ function getOverlap($a, $b){
            a_rect.top > b_rect.bottom);
 }
 
+function diffNumber(a, b){
+  var v = a - b;
+  if( 0 > v ) v *= -1;
+  return v;
+}
 
 
 /*
@@ -21,7 +26,11 @@ function getOverlap($a, $b){
 var ndd = {
   $current: {
     drag: null,
-    drop: null
+    drop: null,
+    select: null
+  },
+  $last: {
+    select: null
   }
 };
 
@@ -46,14 +55,16 @@ var Common = function(){
 */
 
 nDragDrop.draggable = function(opts){
-  _.bindAll(this, "init", "mousedown", "mousemove", "mouseup");
+  _.bindAll(this, "init",
+  "mousedown", "mousemove", "mouseup",
+  "dragstart", "dragging");
   this.init(opts);
 }
 
 
 nDragDrop.draggable.prototype.init = function(opts){
   this.opts = $.extend({
-    
+    distance: 2
   }, opts);
   console.group("nDragDrop.draggable init");
   console.log(this.opts);
@@ -64,16 +75,16 @@ nDragDrop.draggable.prototype.init = function(opts){
   };
   this.vars = {
     graspPosDiffX: 0,
-    graspPosDiffY: 0
+    graspPosDiffY: 0,
+    mousedownPageX: 0,
+    mousedownPageY: 0,
+    mousemoveStack: 0
   };
   
   ndd.common = ndd.common || new Common();
   
   //this.$body = $("body");
   this.$el = $(this.opts.el);
-  this.$el
-    //.attr("draggable", "false");
-    .addClass("ndd_drag");
   //this.$current;
   this.$clone;
   ndd.$body.on("mousedown.ndd_draggable", this.opts.el, this.mousedown);
@@ -81,10 +92,11 @@ nDragDrop.draggable.prototype.init = function(opts){
   ndd.$body.on("mouseup.ndd_draggable", this.mouseup);
 }
 
-nDragDrop.draggable.prototype.mousedown = function(event){
-  console.group("draggable mousedown");
-  //ndd.$current.drag = $(event.currentTarget);
-  ndd.$current.drag = $(event.currentTarget).parent().find(this.opts.el);
+nDragDrop.draggable.prototype.dragstart = function(event){
+  ndd.$body.off("mousemove.ndd_drag_mousemove");
+  console.group("draggable dragstart");
+  //this.status.drag = true;
+  
   //console.log("ndd.$current.drag", ndd.$current.drag);
   var elOffset = ndd.$current.drag.offset();
   console.log("elOffset", elOffset);
@@ -111,19 +123,40 @@ nDragDrop.draggable.prototype.mousedown = function(event){
   
   ndd.$current.drag.css("visibility", "hidden");
   
-  //掴んだ位置の差分
-  this.vars.graspPosDiffX = elOffset.left - event.pageX;
-  this.vars.graspPosDiffY = elOffset.top - event.pageY;
-  
   console.log("X : " + this.vars.graspPosDiffX, "Y : " + this.vars.graspPosDiffY);
   //console.log("X : " + event.pageX, "Y : " + event.pageY);
   
-  ndd.$body.on("mousemove.ndd_draggable", this.mousemove);
+  ndd.$body.on("mousemove.ndd_dragging", this.dragging);
   console.groupEnd();
 }
 
+nDragDrop.draggable.prototype.mousedown = function(event){
+  console.group("draggable mousedown");
+  ndd.$current.drag = $(event.currentTarget).parent().find(this.opts.el);
+  this.vars.mousedownPageX = event.pageX;
+  this.vars.mousedownPageY = event.pageY;
+  
+  //掴んだ位置の差分
+  var elOffset = ndd.$current.drag.offset();
+  this.vars.graspPosDiffX = elOffset.left - event.pageX;
+  this.vars.graspPosDiffY = elOffset.top - event.pageY;
+  
+  console.groupEnd();
+  ndd.$body.on("mousemove.ndd_drag_mousemove", this.mousemove);
+}
+
 nDragDrop.draggable.prototype.mousemove = function(event){
-  //console.group("mousemove");
+  console.group("draggable mousemove");
+  this.vars.mousemoveStack++;
+  if( this.vars.mousemoveStack > this.opts.distance ){
+    this.vars.mousemoveStack = 0;
+    this.dragstart(event);
+  }
+  console.groupEnd();
+}
+
+nDragDrop.draggable.prototype.dragging = function(event){
+  //console.group("draggable dragging");
   ndd.$clones.css({
     top: event.pageY + this.vars.graspPosDiffY,
     left: event.pageX + this.vars.graspPosDiffX
@@ -132,12 +165,14 @@ nDragDrop.draggable.prototype.mousemove = function(event){
 }
 
 nDragDrop.draggable.prototype.mouseup = function(event){
+  ndd.$body.off("mousemove.ndd_drag_mousemove");
   if( null == ndd.$current.drag ) return;
-  console.group("mouseup");
-  ndd.$body.off("mousemove.ndd_draggable");
+  console.group("draggable mouseup");
+  ndd.$body.off("mousemove.ndd_dragging");
   ndd.$clones.hide().empty();
   ndd.$current.drag.css("visibility", "visible");
   ndd.$current.drag = null;
+  this.status.drag = false;
   console.groupEnd();
 }
 
@@ -236,7 +271,14 @@ nSelectable.prototype.init = function(opts){
   this.$selectee;
   this.$selected;//(this.opts.selectee).filter(".ndd_selected")
   this.$el = $(this.opts.el);
-  ndd.$current.select = null;
+  //ndd.$current.select = null;
+  
+  this.$el.each(function(i, el){
+    var $me = $(el),
+        $selected = $me.find(".ndd_selected");
+    console.log(i, el, $selected.length);
+    $selected.last().addClass("ndd_pivot");
+  });
   
   this.$helper = $('<div id="ndd_selectable_helper"><div></div></div>');
   
@@ -258,16 +300,85 @@ nSelectable.prototype.init = function(opts){
 
 nSelectable.prototype.click = function(event){
   console.group("click");
-  var $me = $(event.currentTarget);
+  var $me = $(event.currentTarget),
+      $parent = $me.parents(this.opts.el),
+      $pivot = $parent.find(".ndd_pivot");
   console.log("currentTarget", event.currentTarget);
-  var $select = $me.parents(this.opts.el);
   
-  if( !(event.ctrlKey || event.metaKey) ){
-    console.log("ctrl or cmd.");
-    $select.find(".ndd_selected").removeClass("ndd_selected");
+  //メタキーが押されていない場合はすべての選択を解除する
+  if( !(event.ctrlKey || event.metaKey || event.shiftKey) ){
+    //console.log("ctrl or cmd.");
+    $parent.find(".ndd_selected").not($me).removeClass("ndd_selected");
   }
   
-  $me.addClass("ndd_selected");
+  if( event.ctrlKey || event.metaKey ){
+    //メタキーを押しているとき
+    if( $me.hasClass("ndd_selected") ){
+      //クリックした要素が選択中だったとき
+      $me.removeClass("ndd_selected ndd_pivot");
+      $pivot = $parent.find(".ndd_pivot");
+      if( 0 == $pivot.length ){
+        //pivotがなかったとき
+        var $next = $me.next(".ndd_selected");
+        if( 0 < $next.length ){
+          //次の要素があったとき
+          $next.addClass("ndd_pivot");
+        } else {
+          //次の要素がなかったとき
+          var $prev = $me.prev(".ndd_selected");
+          if( 0 < $next.length ){
+            //前の要素があったとき
+            $prev.addClass("ndd_pivot");
+          } else {
+            //前の要素がなかったとき
+            $parent.find(".ndd_selected").eq(0).addClass("ndd_pivot");
+          }
+        }
+        $pivot = $parent.find(".ndd_pivot");
+      }
+    } else {
+      //クリックした要素が選択中ではなかったとき
+      $pivot.removeClass("ndd_pivot");
+      $parent.find(".ndd_tmp").removeClass("ndd_tmp");
+      $me.addClass("ndd_selected ndd_pivot");
+      $pivot = $parent.find(".ndd_pivot");
+    }
+  } else {
+    //メタキーを押していないとき
+    $me.addClass("ndd_selected");
+  }
+  
+  
+  //シフトキーが押されている場合
+  if( event.shiftKey ){
+    $parent.find(".ndd_tmp").removeClass("ndd_tmp ndd_selected");
+    if( 0 == $pivot.length ){
+      $parent.find(this.opts.selectee).eq(0).addClass("ndd_pivot");
+      $pivot = $parent.find(".ndd_pivot");
+    }
+    var current = $me.index(),
+        pivot = $pivot.index();
+    console.log("current", current);
+    console.log("pivot", pivot);
+    var l = Math.max(current, pivot),
+        s = Math.min(current, pivot);
+    var $item = $parent.find(this.opts.selectee);
+    for( var i = s; i <= l; i++ ){
+      $item.eq(i).addClass("ndd_selected");
+      if( i != pivot ){
+        $item.eq(i).addClass("ndd_tmp");
+      }
+    }
+  }
+  
+  if( $me.hasClass("ndd_selected") ){
+    if( !event.shiftKey ){
+      //ndd.$last.select = $me;
+      $parent.find(".ndd_pivot").removeClass("ndd_pivot");
+      $me.addClass("ndd_pivot");
+    }
+  }
+  
   console.groupEnd();
 }
 
