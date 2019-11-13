@@ -24,16 +24,24 @@ ul, ol, li {
 }
 
 .list_1 {
-  overflow: hidden;
   position: relative;
   width: 412px;
   margin: 0 20px;
+  box-sizing: border-box;
+}
+
+.list_1__1 {
+  margin-top: 1em;
 }
 
 .list_1__items {
+  overflow-y: scroll;
+  overflow-x: hidden;
   display: flex;
   flex-wrap: wrap;
   position: relative;
+  height: 412px;
+  margin: 0;
   padding: 100px;
   border: solid 1px #ccc;
   box-sizing: border-box;

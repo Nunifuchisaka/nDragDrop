@@ -14,60 +14,36 @@
 
 <h1>nDragDrop</h1>
 
-<div id="wrapper" class="container_1">
-  <div class="list_1">
-    <ul id="list1" class="list_1__items">
-      <li class="list_1__item ndd_selected">A1</li>
-      <li class="list_1__item">A2</li>
-      <li class="list_1__item ndd_selected">A3</li>
-      <li class="list_1__item ndd_selected">A4</li>
-      <li class="list_1__item">A5</li>
-      <li class="list_1__item">A6</li>
-      <li class="list_1__item">A7</li>
-      <li class="list_1__item">A8</li>
-      <li class="list_1__item">A9</li>
-      <li class="list_1__item">A10</li>
-      <li class="list_1__item">A11</li>
-      <li class="list_1__item">A12</li>
-      <li class="list_1__item">A13</li>
-      <li class="list_1__item">A14</li>
-      <li class="list_1__item">A15</li>
-      <li class="list_1__item">A16</li>
-      <li class="list_1__item">A17</li>
-      <li class="list_1__item">A18</li>
-      <li class="list_1__item">A19</li>
-    </ul>
+<p><a href="https://github.com/Nunifuchisaka/nDragDrop">github</a></p>
+
+<div class="container_1">
+  <div class="list_1" data-key="A">
+    <ul id="list1" class="list_1__items"></ul>
+    <div class="list_1__1">
+      <button type="button" class="js_add_item">要素を増やす</button>
+    </div>
   </div><!-- /.list_1 -->
-  <div class="list_1">
-    <ul id="list2" class="list_1__items">
-      <li class="list_1__item">B1</li>
-      <li class="list_1__item ndd_selected">B2</li>
-      <li class="list_1__item">B3</li>
-      <li class="list_1__item">B4</li>
-      <li class="list_1__item">B5</li>
-      <li class="list_1__item">B6</li>
-      <li class="list_1__item">B7</li>
-      <li class="list_1__item">B8</li>
-      <li class="list_1__item">B9</li>
-      <li class="list_1__item">B10</li>
-      <li class="list_1__item">B11</li>
-      <li class="list_1__item">B12</li>
-      <li class="list_1__item">B13</li>
-      <li class="list_1__item">B14</li>
-      <li class="list_1__item">B15</li>
-      <li class="list_1__item">B16</li>
-      <li class="list_1__item">B17</li>
-      <li class="list_1__item">B18</li>
-      <li class="list_1__item">B19</li>
-      <li class="list_1__item">B20</li>
-    </ul>
+  <div class="list_1" data-key="B">
+    <ul id="list2" class="list_1__items"></ul>
+    <div class="list_1__1">
+      <button type="button" class="js_add_item">要素を増やす</button>
+    </div>
   </div><!-- /.list_1 -->
-</div><!-- /#wrapper.container_1 -->
+</div><!-- /container_1 -->
+
+<div class="container_1" style="margin-top: 40px">
+  <div class="list_1" data-key="C">
+    <ul class="list_1__items"></ul>
+    <div class="list_1__1">
+      <button type="button" class="js_add_item">要素を増やす</button>
+    </div>
+  </div><!-- /.list_1 -->
+</div><!-- /.container_1 -->
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
 <script src="../dst/jquery.nDragDrop.js"></script>
 <script>
 $(function(){
@@ -81,14 +57,6 @@ $(function(){
   
   new nDragDrop.draggable({
     el: ".ndd_selected",
-    create: function(event, ui){
-      /*
-      console.group("drag create");
-      //console.log(event);
-      console.table(ui);
-      console.groupEnd();
-      */
-    },
     start: function(event, ui){
       console.group("drag start");
       //console.log(event);
@@ -129,16 +97,44 @@ $(function(){
       console.group("drop drop");
       //console.log(event);
       console.table(ui);
+      
+      //ドラッグされた要素をドロップ先に移動させる
       var $me = $(event.currentTarget);
       ui.draggable.remove();
-      console.log("ui.draggable", ui.draggable);
+      //console.log("ui.draggable", ui.draggable);
       $me.append(ui.draggable);
+      
       console.groupEnd();
      
     }
   });
   
+  
+  
+  //最初に要素を作成する
+  $("#list1").append( getListHTML("A", 50) );
+  $("#list2").append( getListHTML("B", 50) );
+  
+  //ボタンをクリックで要素が増えるように
+  $(".js_add_item").click(function(event){
+    var $me = $(event.currentTarget),
+        $list = $me.parents(".list_1"),
+        key = $list.data("key"),
+        $items = $list.find(".list_1__items"),
+        $item = $items.find(".list_1__item");
+    $items.append('<li class="list_1__item">'+ key + $item.length +'</li>');
+  });
+  
 });
+
+//要素を追加するための関数
+function getListHTML(key, length){
+  var html = "";
+  for(var i = 0; i < length; i ++){
+    html += '<li class="list_1__item">'+ key + i +'</li>';
+  }
+  return html;
+}
 </script>
 </body>
 </html>

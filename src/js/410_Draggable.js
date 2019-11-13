@@ -13,7 +13,6 @@ nDragDrop.draggable = function(opts){
 nDragDrop.draggable.prototype.init = function(opts){
   this.opts = $.extend({
     distance: 2,
-    create: null,
     start: null,
     drag: null,
     stop: null
