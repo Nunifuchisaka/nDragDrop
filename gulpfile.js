@@ -56,7 +56,9 @@ gulp.task('sass', function(){
 gulp.task('js', function(){
   return gulp.src([
       'src/js/110_header.js',
-      'src/js/410_View.js',
+      'src/js/410_Draggable.js',
+      'src/js/410_Droppable.js',
+      'src/js/410_Selectable.js',
       'src/js/990_footer.js'
     ])
     .pipe(plumber())

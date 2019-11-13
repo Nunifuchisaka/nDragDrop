@@ -6,8 +6,13 @@
 
 <title>nDragDrop</title>
 
-<link rel="stylesheet" href="../dst/jquery.nDragDrop.css" />
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="style.css">
+<style>
+.ui-selected {
+  background-color: red;
+}
+</style>
 
 </head>
 <body>
@@ -17,10 +22,10 @@
 <div id="wrapper" class="container_1">
   <div class="list_1">
     <ul id="list1" class="list_1__items">
-      <li class="list_1__item ndd_selected">A1</li>
+      <li class="list_1__item">A1</li>
       <li class="list_1__item">A2</li>
-      <li class="list_1__item ndd_selected">A3</li>
-      <li class="list_1__item ndd_selected">A4</li>
+      <li class="list_1__item">A3</li>
+      <li class="list_1__item">A4</li>
       <li class="list_1__item">A5</li>
       <li class="list_1__item">A6</li>
       <li class="list_1__item">A7</li>
@@ -41,7 +46,7 @@
   <div class="list_1">
     <ul id="list2" class="list_1__items">
       <li class="list_1__item">B1</li>
-      <li class="list_1__item ndd_selected">B2</li>
+      <li class="list_1__item">B2</li>
       <li class="list_1__item">B3</li>
       <li class="list_1__item">B4</li>
       <li class="list_1__item">B5</li>
@@ -65,74 +70,101 @@
 </div><!-- /#wrapper.container_1 -->
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
-<script src="../dst/jquery.nDragDrop.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
 $(function(){
   
-  const $document = $(document);
-  
-  new nSelectable({
-    el: ".list_1__items",
-    excluse: ".list_1__item"
+/*
+  $(".list_1__items").selectable({
+    selected: function(event, ui){
+      console.group("selectable selected");
+      //console.log(event);
+      console.table(ui);
+      console.groupEnd();
+    },
+    selecting: function(event, ui){
+      console.group("selectable selecting");
+      //console.log(event);
+      console.table(ui);
+      console.groupEnd();
+    },
+    start: function(event, ui){
+      console.group("selectable start");
+      //console.log(event);
+      console.table(ui);
+      console.groupEnd();
+    },
+    stop: function(event, ui){
+      console.group("selectable stop");
+      //console.log(event);
+      console.table(ui);
+      console.groupEnd();
+    },
+    unselected: function(event, ui){
+      console.group("selectable unselected");
+      //console.log(event);
+      console.table(ui);
+      console.groupEnd();
+    },
+    unselecting: function(event, ui){
+      console.group("selectable unselecting");
+      //console.log(event);
+      console.table(ui);
+      console.groupEnd();
+    }
   });
+*/
   
-  new nDragDrop.draggable({
-    el: ".ndd_selected",
+  $(".list_1__item").draggable({
+    helper: "clone",
     create: function(event, ui){
       /*
-      console.group("drag create");
+      console.group("draggable create");
       //console.log(event);
       console.table(ui);
       console.groupEnd();
       */
     },
     start: function(event, ui){
-      console.group("drag start");
+      console.group("draggable start");
       //console.log(event);
       console.table(ui);
       console.groupEnd();
     },
     drag: function(event, ui){
       /*
-      console.group("drag drag");
+      console.group("draggable drag");
       //console.log(event);
       console.table(ui);
       console.groupEnd();
       */
     },
     stop: function(event, ui){
-      console.group("drag stop");
+      console.group("draggable stop");
       //console.log(event);
       console.table(ui);
       console.groupEnd();
     }
   });
   
-  new nDragDrop.droppable({
-    el: ".list_1__items",
+  $(".list_1__items").droppable({
     over: function(event, ui){
-      console.group("drop over");
+      console.group("droppable over");
       //console.log(event);
       console.table(ui);
       console.groupEnd();
     },
     out: function(event, ui){
-      console.group("drop out");
+      console.group("droppable out");
       //console.log(event);
       console.table(ui);
       console.groupEnd();
     },
     drop: function(event, ui){
-      console.group("drop drop");
+      console.group("droppable drop");
       //console.log(event);
       console.table(ui);
-      var $me = $(event.currentTarget);
-      ui.draggable.remove();
-      console.log("ui.draggable", ui.draggable);
-      $me.append(ui.draggable);
       console.groupEnd();
      
     }
